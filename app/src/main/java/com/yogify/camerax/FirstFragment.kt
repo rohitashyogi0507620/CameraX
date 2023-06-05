@@ -213,6 +213,7 @@ class FirstFragment : Fragment() {
     private fun startCamera() {
 
 
+        //For Record videos
         val recorder = Recorder.Builder()
             .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
             .build()
@@ -223,27 +224,10 @@ class FirstFragment : Fragment() {
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            //For Capture Image
-//            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-//
-//            // Preview
-//            val preview = Preview.Builder()
-//                .build()
-//                .also {
-//                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-//                }
-//
-//            val imageAnalyzer = ImageAnalysis.Builder()
-//                .build()
-//                .also {
-//                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-//                        Log.d(TAG, "Average luminosity: $luma")
-//                    })
-//                }
 
-
+            //Camera Provider
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
 
             // Preview
             val preview = Preview.Builder()
@@ -252,13 +236,8 @@ class FirstFragment : Fragment() {
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
 
-            val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
-                .build()
-            videoCapture = VideoCapture.withOutput(recorder)
-
             // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
                 // Unbind use cases before rebinding
@@ -276,8 +255,11 @@ class FirstFragment : Fragment() {
 //                    this, cameraSelector, preview, imageCapture, imageAnalyzer)
 //
                 //Camera Provider for video
-                cameraProvider
-                    .bindToLifecycle(this, cameraSelector, preview, videoCapture)
+//                cameraProvider
+//                    .bindToLifecycle(this, cameraSelector, preview, videoCapture)
+// //             Both Image and Video
+                cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, imageCapture, videoCapture)
 
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
